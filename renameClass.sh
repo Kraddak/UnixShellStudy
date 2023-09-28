@@ -1,73 +1,58 @@
-#!/bin/bash
+    #!/bin/bash
 
-src='/tmp/project'
+    src='/tmp/project'
 
-# Select the names to change
-original=( "old1" "old2")
-substitutes=("new1"  "new2")
+    # Select the names to change
+    original=( "old1" "old2")
+    substitutes=("new1"  "new2")
 
-exec 3< $src
+    exec 3< $src
 
-fileNames=( $(find "$src") )
+    fileNames=( $(find "$src") )
 
-for ((i=${#fileNames[@]}-1; i>=0; i--)); do
+    for ((i=${#fileNames[@]}-1; i>=0; i--)); do
 
-    right="${fileNames[$i]/\/*\//}"    
-    left="${fileNames[$i]/${right}/}"
+        pathName="${fileNames[$i]/\/*\//}"    
+        fileName="${fileNames[$i]/${pathName}/}"
 
-    newRight=$right
-    
-    echo ${fileNames[$i]}
-
-    for index in ${!original[@]}; do
-        if [[ $right =~ ${original[$index]} ]]; then
-            newRight=${newRight/${original[$index]}/${substitutes[$index]}}
-        fi
-    done
-
-    if [[ $right != $newRight ]]; then
-        echo " -> $left$newRight"
-        echo ""
-        #echo ""
-        mv ${fileNames[$i]} "$left$newRight"
-    fi
-
-done
-
-    
-    echo ""
-    echo "----------------------------------------- WARNING --------------------------------------------"
-    echo " Ho modificato gli array poiché sto differenziando tra fileName e className"
-    echo "----------------------------------------- WARNING --------------------------------------------"
-    echo ""
-
-original=( "ins\."   "InsReader")
-substitutes=("asterx\."  "AsterxReader")
-
-
-# Convert class names
-
-for path in $(find "$src"); do    
-    if [[ -f $path ]]; then
-
+        newpathName=$pathName
+        
+        echo ${fileNames[$i]}
 
         for index in ${!original[@]}; do
-
-            #grep "${original[$index]}" $path
-            tmp=$(grep "${original[$index]}" "$path")
-    
-            if [[ $tmp =~ ${original[$index]} ]]; then
-                echo $path
-                echo $tmp
-                echo " "
-                sed -i s/${original[$index]}/${substitutes[$index]}/ $path   
+            if [[ $pathName =~ ${original[$index]} ]]; then
+                newpathName=${newpathName/${original[$index]}/${substitutes[$index]}}
             fi
-
-            
-        [$index]}" $path
-
-
         done
-    fi
-done
+
+        if [[ $pathName != $newpathName ]]; then
+            echo " -> $fileName$newpathName"
+            echo ""
+            #echo ""
+            mv ${fileNames[$i]} "$fileName$newpathName"
+        fi
+
+    done
+
+    #######################################################################################
+
+    original=("old1" "old2")
+    substitutes=("new1" "new2")
+
+    for path in $(find "$src"); do
+        if [[ -f "$path" ]]; then
+
+            for index in "${!original[@]}"; do
+
+                tmp=$(grep "${original[$index]}" "$path")
+
+                if [[ $tmp =~ ${original[$index]} ]]; then
+                    echo "File: $path"
+                    echo "Matched Line: $tmp"
+                    echo " "
+                    sed -i "s/${original[$index]}/${substitutes[$index]}/g" "$path"
+                fi
+            done
+        fi
+    done
 
