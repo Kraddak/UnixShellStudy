@@ -3,7 +3,7 @@
     src='/tmp/project'
 
     # Select the names to change
-    original=( "old1" "old2")
+    originals=( "old1" "old2")
     substitutes=("new1"  "new2")
 
     exec 3< $src
@@ -19,9 +19,9 @@
         
         echo ${fileNames[$i]}
 
-        for index in ${!original[@]}; do
-            if [[ $pathName =~ ${original[$index]} ]]; then
-                newpathName=${newpathName/${original[$index]}/${substitutes[$index]}}
+        for index in ${!originals[@]}; do
+            if [[ $pathName =~ ${originals[$index]} ]]; then
+                newpathName=${newpathName/${originals[$index]}/${substitutes[$index]}}
             fi
         done
 
@@ -36,21 +36,21 @@
 
     #######################################################################################
 
-    original=("old1" "old2")
+    originals=("old1" "old2")
     substitutes=("new1" "new2")
 
     for path in $(find "$src"); do
         if [[ -f "$path" ]]; then
 
-            for index in "${!original[@]}"; do
+            for index in "${!originals[@]}"; do
 
-                tmp=$(grep "${original[$index]}" "$path")
+                tmp=$(grep "${originals[$index]}" "$path")
 
-                if [[ $tmp =~ ${original[$index]} ]]; then
+                if [[ $tmp =~ ${originals[$index]} ]]; then
                     echo "File: $path"
                     echo "Matched Line: $tmp"
                     echo " "
-                    sed -i "s/${original[$index]}/${substitutes[$index]}/g" "$path"
+                    sed -i "s/${originals[$index]}/${substitutes[$index]}/g" "$path"
                 fi
             done
         fi
